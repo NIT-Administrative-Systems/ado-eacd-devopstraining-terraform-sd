@@ -14,7 +14,7 @@ resource "aws_api_gateway_rest_api" "wrst-apigateway-rest" {
   }
 }
 
-// API resource for /ridescdt - in the tutorial, this is just /ride
+// provides API gateway resource for /ride
 resource "aws_api_gateway_resource" "wrst-ag-ride-resource" {
   rest_api_id = aws_api_gateway_rest_api.wrst-apigateway-rest.id
   parent_id   = aws_api_gateway_rest_api.wrst-apigateway-rest.root_resource_id
@@ -22,7 +22,7 @@ resource "aws_api_gateway_resource" "wrst-ag-ride-resource" {
 }
 
 // API gateway authorizer that users the cognito user pool created in earlier steps
-// had to add [] to provider_arns, as it is expecting an array and not an individual value
+// had to add [] to provider_arns, as it needs to come in array format 
 resource "aws_api_gateway_authorizer" "wrst-apigateway-authorizer" {
   name                   = "WildRydesTAuthorizer"
   rest_api_id            = aws_api_gateway_rest_api.wrst-apigateway-rest.id
@@ -32,7 +32,7 @@ resource "aws_api_gateway_authorizer" "wrst-apigateway-authorizer" {
   provider_arns = [aws_cognito_user_pool.wrst-pool.arn]
 }
 
-// set up an HTTP Method for /tride api gateway resource for
+// set up an HTTP Method for api gateway resource 
 resource "aws_api_gateway_method" "wrst-apigate-method" {
   rest_api_id   = aws_api_gateway_rest_api.wrst-apigateway-rest.id
   resource_id   = aws_api_gateway_resource.wrst-ag-ride-resource.id
@@ -80,6 +80,7 @@ resource "aws_api_gateway_integration" "wrst-apigateway-integration" {
 }
 
 // sets HTTP Method Integration Response for api gateway
+// FYI if http_method is incorrect, CORS error will appear in browser
 resource "aws_api_gateway_integration_response" "wrst-ag-integration-response" {
   rest_api_id   = aws_api_gateway_rest_api.wrst-apigateway-rest.id
   resource_id   = aws_api_gateway_resource.wrst-ag-ride-resource.id
